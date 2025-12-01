@@ -58,16 +58,16 @@ export function Sidebar() {
                             const Icon = item.icon;
                             const isActive = router.pathname === item.href;
                             return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                                            ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400"
-                                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                                        }`}
-                                >
-                                    <Icon className="w-5 h-5" />
-                                    <span className="font-medium">{item.label}</span>
+                                <Link key={item.href} href={item.href}>
+                                    <a
+                                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors cursor-pointer ${isActive
+                                                ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400"
+                                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                            }`}
+                                    >
+                                        <Icon className="w-5 h-5" />
+                                        <span className="font-medium">{item.label}</span>
+                                    </a>
                                 </Link>
                             );
                         })}
@@ -81,13 +81,11 @@ export function Sidebar() {
                         {generalItems.map((item) => {
                             const Icon = item.icon;
                             return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                                >
-                                    <Icon className="w-5 h-5" />
-                                    <span className="font-medium">{item.label}</span>
+                                <Link key={item.href} href={item.href}>
+                                    <a className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+                                        <Icon className="w-5 h-5" />
+                                        <span className="font-medium">{item.label}</span>
+                                    </a>
                                 </Link>
                             );
                         })}

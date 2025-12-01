@@ -1,8 +1,18 @@
 import { StatCard } from "@/components/dashboard/stat-card";
-import { AnalyticsChart } from "@/components/dashboard/analytics-chart";
-import { ProgressChart } from "@/components/dashboard/progress-chart";
 import { TeamSection } from "@/components/dashboard/team-section";
 import { useTasks } from "@/hooks/useTasks";
+import dynamic from "next/dynamic";
+
+// Import charts dengan dynamic import untuk menghindari SSR issues
+const AnalyticsChart = dynamic(
+    () => import("@/components/dashboard/analytics-chart").then(mod => mod.AnalyticsChart),
+    { ssr: false }
+);
+
+const ProgressChart = dynamic(
+    () => import("@/components/dashboard/progress-chart").then(mod => mod.ProgressChart),
+    { ssr: false }
+);
 
 export default function Home() {
     const { tasks } = useTasks();

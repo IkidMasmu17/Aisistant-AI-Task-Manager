@@ -4,8 +4,26 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Sidebar } from "@/components/sidebar";
 import Head from "next/head";
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, Moon, Sun } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
+import { useTheme } from "next-themes";
+
+function ThemeToggle() {
+    const { theme, setTheme } = useTheme();
+
+    return (
+        <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg relative"
+        >
+            {/* Sun: Visible in Dark (scale-100), Hidden in Light (scale-0) */}
+            <Sun className="h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            {/* Moon: Visible in Light (scale-100), Hidden in Dark (scale-0) */}
+            <Moon className="absolute top-2 left-2 h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <span className="sr-only">Toggle theme</span>
+        </button>
+    );
+}
 
 function AppContent({ Component, pageProps }: AppProps) {
     const { user } = useAuth();
@@ -34,6 +52,9 @@ function AppContent({ Component, pageProps }: AppProps) {
                                     ⌘ K
                                 </kbd>
                             </div>
+
+                            {/* Theme Toggle */}
+                            <ThemeToggle />
 
                             {/* Notifications */}
                             <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
