@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: CheckSquare, label: "Tasks", href: "/tasks" },
     { icon: Calendar, label: "Calendar", href: "/calendar" },
     { icon: BarChart3, label: "Analytics", href: "/analytics" },

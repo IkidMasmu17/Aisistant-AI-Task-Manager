@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Sidebar } from "@/components/sidebar";
@@ -27,6 +28,12 @@ function ThemeToggle() {
 
 function AppContent({ Component, pageProps }: AppProps) {
     const { user } = useAuth();
+    const router = useRouter();
+    const isLandingPage = router.pathname === "/";
+
+    if (isLandingPage) {
+        return <Component {...pageProps} />;
+    }
 
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-gray-950">

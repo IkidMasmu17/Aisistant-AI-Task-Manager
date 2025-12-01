@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTasks } from "@/hooks/useTasks";
+import { useAuth } from "@/components/auth-provider";
 import { TaskItem } from "./task-item";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { AISuggestion } from "./ai-suggestion";
 
 export function TaskList() {
     const { tasks, loading, addTask, toggleTask, deleteTask } = useTasks();
+    const { isPro } = useAuth();
     const [newTaskTitle, setNewTaskTitle] = useState("");
 
     const handleAddTask = async (e: React.FormEvent) => {
@@ -26,7 +28,7 @@ export function TaskList() {
 
     return (
         <div className="max-w-2xl mx-auto">
-            <AISuggestion />
+            <AISuggestion isPro={isPro} />
 
             <form onSubmit={handleAddTask} className="flex gap-2 mb-8">
                 <Input

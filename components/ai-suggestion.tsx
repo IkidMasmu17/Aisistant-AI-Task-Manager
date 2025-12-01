@@ -6,13 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Sparkles, Loader2 } from "lucide-react";
 import { useTasks } from "@/hooks/useTasks";
 
-export function AISuggestion() {
+interface AISuggestionProps {
+    isPro?: boolean;
+}
+
+export function AISuggestion({ isPro = false }: AISuggestionProps) {
     const [prompt, setPrompt] = useState("");
     const [loading, setLoading] = useState(false);
     const { addTask } = useTasks();
 
     const handleSuggest = async () => {
         if (!prompt.trim()) return;
+
+        if (!isPro) {
+            alert("AI Suggestions are available for Pro users only. Please upgrade to Pro.");
+            return;
+        }
 
         setLoading(true);
         try {
