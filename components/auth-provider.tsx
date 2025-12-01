@@ -9,6 +9,7 @@ interface AuthContextType {
     loading: boolean;
     signInWithGoogle: () => Promise<void>;
     logout: () => Promise<void>;
+    googleAccessToken: string | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,11 +17,13 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     signInWithGoogle: async () => { },
     logout: async () => { },
+    googleAccessToken: null,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [googleAccessToken, setGoogleAccessToken] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -33,8 +36,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const signInWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/calendar.events.readonly');
+
         try {
-            await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, provider);
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential?.accessToken;
+            if (token) {
+                setGoogleAccessToken(token);
+            }
         } catch (error) {
             console.error("Error signing in with Google", error);
         }
@@ -43,13 +53,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = async () => {
         try {
             await signOut(auth);
+            setGoogleAccessToken(null);
         } catch (error) {
             console.error("Error signing out", error);
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signInWithGoogle, logout }}>
+        <AuthContext.Provider value={{ user, loading, signInWithGoogle, logout, googleAccessToken }}>
             {children}
         </AuthContext.Provider>
     );
