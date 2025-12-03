@@ -1,13 +1,15 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut } from "firebase/auth";
+import { onAuthStateChanged, User, GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
     user: User | null;
     loading: boolean;
     signInWithGoogle: () => Promise<void>;
+    signInWithEmail: (email: string, password: string) => Promise<void>;
+    signUpWithEmail: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     googleAccessToken: string | null;
     isPro: boolean;
@@ -18,6 +20,8 @@ const AuthContext = createContext<AuthContextType>({
     user: null,
     loading: true,
     signInWithGoogle: async () => { },
+    signInWithEmail: async () => { },
+    signUpWithEmail: async () => { },
     logout: async () => { },
     googleAccessToken: null,
     isPro: false,
@@ -29,36 +33,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
     const [googleAccessToken, setGoogleAccessToken] = useState<string | null>(null);
     const [isPro, setIsPro] = useState(false);
+
     useEffect(() => {
+        console.log("🔧 AuthProvider mounted");
         const unsubscribe = onAuthStateChanged(auth, (user) => {
+            console.log("🔐 Auth state changed:", user?.email || "null");
             setUser(user);
             setLoading(false);
             if (!user) setIsPro(false);
-        });
-
-        getRedirectResult(auth).then((result) => {
-            if (result) {
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                const token = credential?.accessToken;
-                if (token) {
-                    setGoogleAccessToken(token);
-                }
-            }
-        }).catch((error) => {
-            console.error("Error getting redirect result", error);
         });
 
         return () => unsubscribe();
     }, []);
 
     const signInWithGoogle = async () => {
+        console.log("🚀 Initiating Google Sign In with POPUP...");
         const provider = new GoogleAuthProvider();
         provider.addScope('https://www.googleapis.com/auth/calendar.events.readonly');
 
         try {
-            await signInWithRedirect(auth, provider);
+            console.log("🔄 Calling signInWithPopup...");
+            const result = await signInWithPopup(auth, provider);
+            console.log("✅ Sign in successful!", result.user.email);
+
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential?.accessToken;
+            if (token) {
+                setGoogleAccessToken(token);
+                console.log("🔑 Access token saved");
+            }
         } catch (error) {
-            console.error("Error signing in with Google", error);
+            console.error("❌ Error signing in with Google", error);
+            alert("Google Login Error: " + (error as Error).message);
+        }
+    };
+
+    const signInWithEmail = async (email: string, password: string) => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+            console.error("Error signing in with email", error);
+            throw error;
+        }
+    };
+
+    const signUpWithEmail = async (email: string, password: string) => {
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+            console.error("Error signing up with email", error);
+            throw error;
         }
     };
 
@@ -77,7 +101,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signInWithGoogle, logout, googleAccessToken, isPro, upgradeToPro }}>
+        <AuthContext.Provider value={{
+            user,
+            loading,
+            signInWithGoogle,
+            signInWithEmail,
+            signUpWithEmail,
+            logout,
+            googleAccessToken,
+            isPro,
+            upgradeToPro
+        }}>
             {children}
         </AuthContext.Provider>
     );
