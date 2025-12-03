@@ -29,9 +29,9 @@ function ThemeToggle() {
 function AppContent({ Component, pageProps }: AppProps) {
     const { user } = useAuth();
     const router = useRouter();
-    const isLandingPage = router.pathname === "/";
+    const isStandalonePage = router.pathname === "/" || router.pathname === "/login";
 
-    if (isLandingPage) {
+    if (isStandalonePage) {
         return <Component {...pageProps} />;
     }
 

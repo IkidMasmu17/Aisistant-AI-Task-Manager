@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { onAuthStateChanged, User, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
@@ -29,12 +29,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
     const [googleAccessToken, setGoogleAccessToken] = useState<string | null>(null);
     const [isPro, setIsPro] = useState(false);
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setUser(user);
             setLoading(false);
             if (!user) setIsPro(false);
+        });
+
+        getRedirectResult(auth).then((result) => {
+            if (result) {
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential?.accessToken;
+                if (token) {
+                    setGoogleAccessToken(token);
+                }
+            }
+        }).catch((error) => {
+            console.error("Error getting redirect result", error);
         });
 
         return () => unsubscribe();
@@ -45,12 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         provider.addScope('https://www.googleapis.com/auth/calendar.events.readonly');
 
         try {
-            const result = await signInWithPopup(auth, provider);
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential?.accessToken;
-            if (token) {
-                setGoogleAccessToken(token);
-            }
+            await signInWithRedirect(auth, provider);
         } catch (error) {
             console.error("Error signing in with Google", error);
         }

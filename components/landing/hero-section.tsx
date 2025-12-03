@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useAuth } from "@/components/auth-provider";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
@@ -26,14 +27,15 @@ export function HeroSection() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <Button
-                        size="lg"
-                        className="h-12 px-8 text-lg bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto"
-                        onClick={signInWithGoogle}
-                    >
-                        Start for free
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
+                    <Link href="/login">
+                        <Button
+                            size="lg"
+                            className="h-12 px-8 text-lg bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto"
+                        >
+                            Start for free
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                    </Link>
 
                 </div>
 

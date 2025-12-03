@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
+import { useRouter } from "next/router";
 
 const plans = [
     {
@@ -36,16 +37,18 @@ const plans = [
 export function PricingSection() {
     const { user, isPro, upgradeToPro, signInWithGoogle } = useAuth();
 
+    const router = useRouter();
+
     const handleAction = (planName: string) => {
         if (planName === "Pro") {
             if (!user) {
-                signInWithGoogle();
+                router.push("/login");
             } else {
                 upgradeToPro();
                 alert("Successfully upgraded to Pro! (Mock)");
             }
         } else {
-            if (!user) signInWithGoogle();
+            if (!user) router.push("/login");
         }
     };
 

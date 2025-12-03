@@ -29,10 +29,14 @@ export function LandingNavbar() {
                         </Link>
                     ) : (
                         <>
-                            <Button variant="ghost" onClick={signInWithGoogle}>Login</Button>
-                            <Button onClick={signInWithGoogle} className="bg-purple-600 hover:bg-purple-700 text-white">
-                                Start for free
-                            </Button>
+                            <Link href="/login">
+                                <Button variant="ghost">Login</Button>
+                            </Link>
+                            <Link href="/login">
+                                <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                                    Start for free
+                                </Button>
+                            </Link>
                         </>
                     )}
                 </div>
