@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckSquare, ArrowLeft, Mail, Lock, Loader2 } from "lucide-react";
+import { CheckSquare, ArrowLeft, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
-    const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+    const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword } = useAuth();
     const router = useRouter();
 
     const [email, setEmail] = useState("");
@@ -15,6 +15,7 @@ export default function LoginPage() {
     const [isSignUp, setIsSignUp] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         console.log("🔄 Login page useEffect triggered");
@@ -46,6 +47,20 @@ export default function LoginPage() {
             setError(err.message || "Authentication failed");
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleForgotPassword = async () => {
+        if (!email) {
+            alert("Please enter your email address first");
+            return;
+        }
+
+        try {
+            await resetPassword(email);
+            alert("Password reset email sent! Check your inbox.");
+        } catch (err: any) {
+            alert("Error: " + (err.message || "Failed to send reset email"));
         }
     };
 
@@ -114,15 +129,37 @@ export default function LoginPage() {
                             <div className="relative">
                                 <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-500" />
                                 <Input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="Password"
-                                    className="pl-10 bg-black/50 border-gray-700 focus:border-purple-500"
+                                    className="pl-10 pr-10 bg-black/50 border-gray-700 focus:border-purple-500"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     minLength={6}
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-3 text-gray-500 hover:text-gray-300 transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="w-5 h-5" />
+                                    ) : (
+                                        <Eye className="w-5 h-5" />
+                                    )}
+                                </button>
                             </div>
+                            {!isSignUp && (
+                                <div className="text-right">
+                                    <button
+                                        type="button"
+                                        onClick={handleForgotPassword}
+                                        className="text-sm text-purple-400 hover:text-purple-300 hover:underline"
+                                    >
+                                        Forgot Password?
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <Button

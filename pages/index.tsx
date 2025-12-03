@@ -3,6 +3,8 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { PricingSection } from "@/components/landing/pricing-section";
 import { ContactSection } from "@/components/landing/contact-section";
+import { AnimatedBackground } from "@/components/landing/animated-background";
+import { ProductShowcase } from "@/components/landing/product-showcase";
 import { useAuth } from "@/components/auth-provider";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -20,11 +22,13 @@ export default function LandingPage() {
     if (loading) return null;
 
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-purple-500/30">
+        <div className="min-h-screen bg-black text-white selection:bg-purple-500/30 relative overflow-hidden">
+            <AnimatedBackground />
             <LandingNavbar />
-            <main>
+            <main className="relative z-10">
                 <HeroSection />
                 <FeaturesSection />
+                <ProductShowcase />
                 <PricingSection />
             </main>
             <ContactSection />
